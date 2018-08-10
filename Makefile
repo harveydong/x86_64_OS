@@ -1,7 +1,9 @@
 LD ?= ld
 CC ?= gcc
 OBJCOPY ?= objcopy
-
+TOPDIR ?= $(shell pwd)
+CD ?= cd
+CP ?= cp
 CFLAGS = -Wall -g -ffreestanding -Os -march=i386 -m16
 AFLAGS = -Wall -g -ffreestanding -march=i386 -m16
 
@@ -31,9 +33,16 @@ bootloader.bin: $(OBJS) boot.ld
 	#$(LD) --oformat binary -T boot.ld $(OBJS) -o bootloader.elf
 	$(LD)  -T boot.ld $(OBJS) -o bootloader.elf
 	$(OBJCOPY) -O binary bootloader.elf bootloader.bin
-install:
+
+
+head32_64.bin:
+	$(CD) $(TOPDIR)/boot/kernel/arch/ && $(MAKE) && $(CP) head32_64.bin $(TOPDIR)/
+kernel.elf:
+	$(CD) $(TOPDIR)/boot/kernel/arch/kernel/ && $(MAKE) && $(CP) kernel.elf $(TOPDIR)/
+
+install: head32_64.bin kernel.elf
 	dd if=bootloader.bin of=c.img bs=512 conv=notrunc
-	dd if=head_32.bin of=c.img bs=512 seek=32 conv=notrunc
+	dd if=head32_64.bin of=c.img bs=512 seek=32 conv=notrunc
 	dd if=kernel.elf of=c.img bs=512 seek=102 conv=notrunc
 
 %.o: %.S
@@ -43,6 +52,6 @@ install:
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm *.o bootloader.bin image
+	rm *.o bootloader.bin image *.elf *.bin
 
 .PHONY: clean
