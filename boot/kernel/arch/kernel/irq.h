@@ -1,9 +1,10 @@
 #ifndef __IRQ_H_
 #define __IRQ_H_
 #include "types.h"
+#include "desc_defs.h"
 
 #define NUM_VECTORS 256
-
+#define NR_VECTORS 	256
 enum{
 	GATE_INTERRUPT = 0xE,
 	GATE_TRAP = 0xF,
@@ -29,6 +30,9 @@ typedef struct gate_struct64 gate_desc;
 
 
 extern gate_desc idt_table[];
+
+extern struct desc_ptr idt_descr;
+
 #define NUM_EXCEPTION_VECTORS 32
 extern const char early_idt_handlers[NUM_EXCEPTION_VECTORS][10];
 #endif

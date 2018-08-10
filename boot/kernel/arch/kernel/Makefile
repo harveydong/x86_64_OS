@@ -27,8 +27,14 @@ traps.o: traps.c
 early_printk.o: early_printk.c
 	gcc -fno-builtin -mcmodel=medium -fno-stack-protector -c early_printk.c
 
-kernel.elf:  head_64.o head64.o common.o init_task.o init-mm.o  sched.h desc.h percpu.h string.o init_64.o traps.o early_printk.o
-	ld  -T vmlinux.ld -o kernel.elf head_64.o head64.o common.o init_task.o init-mm.o string.o  init_64.o traps.o early_printk.o
+physaddr.o: physaddr.c
+	gcc -fno-builtin -mcmodel=medium -fno-stack-protector -c physaddr.c
+
+start_kernel.o: start_kernel.c
+	gcc -fno-builtin -mcmodel=large -fno-stack-protector -c start_kernel.c
+	
+kernel.elf:  head_64.o head64.o common.o init_task.o init-mm.o  sched.h desc.h percpu.h string.o init_64.o start_kernel.o physaddr.o traps.o early_printk.o
+	ld  -T vmlinux.ld -o kernel.elf head_64.o head64.o common.o init_task.o init-mm.o string.o  init_64.o  start_kernel.o physaddr.o traps.o early_printk.o
 
 
 clean:

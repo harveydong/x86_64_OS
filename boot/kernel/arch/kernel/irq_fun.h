@@ -38,4 +38,10 @@ static inline void set_intr_gate(unsigned int n,void *addr)
 {
 	_set_gate(n,GATE_INTERRUPT,addr,0,0,__KERNEL_CS);
 }
+
+static inline void native_load_idt(const struct desc_ptr *dtr)
+{
+	asm volatile("lidt %0"::"m"(*dtr));
+}
+#define load_idt(dtr) native_load_idt(dtr)
 #endif

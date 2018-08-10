@@ -19,6 +19,11 @@ struct desc_struct {
 } __attribute__((packed));
 
 
+struct desc_ptr {
+	unsigned short size;
+	unsigned long address;
+
+}__attribute__((packed));
 
 struct gdt_page {
 	struct desc_struct gdt[GDT_ENTRIES];

@@ -3,6 +3,7 @@
 #include "desc.h"
 #include "../../../segment.h"
 #include "desc_defs.h"
+#include "irq.h"
 
 DEFINE_PER_CPU_PAGE_ALIGNED(struct gdt_page,gdt_page) = {
 	.gdt = {
@@ -19,3 +20,6 @@ DECLARE_PER_CPU_FIRST(union irq_stack_union,irq_stack_union);
 DECLARE_INIT_PER_CPU(irq_stack_union);
 
 DEFINE_PER_CPU_FIRST(union irq_stack_union,irq_stack_union) __attribute__((aligned(PAGE_SIZE)));
+
+
+struct desc_ptr idt_descr = {NR_VECTORS*16 -1,(unsigned long)idt_table};

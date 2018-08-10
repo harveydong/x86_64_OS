@@ -7,7 +7,11 @@
 #include "desc.h"
 #include "irq_fun.h"
 #include "kernel.h"
+#include "desc_defs.h"
+#include "page.h"
+#include "../../../../boot.h"
 
+struct boot_params boot_params __attribute__((aligned(16)));
 
 static void __init clear_bss(void)
 {
@@ -22,6 +26,19 @@ static void __init zap_identity_mappings(void)
 	__flush_tlb_all();
 
 }
+
+static void __init copy_bootdata(char *real_mode_data)
+{
+	memcpy(&boot_params,real_mode_data,sizeof(boot_params));
+}
+void __init x86_64_start_reservations(char *real_mode_data)
+{
+	copy_bootdata(__va(real_mode_data));
+
+	//reserve_early(__pa_symbol(&_text),__pa_symbol(&_bss_stop),"TEXT DATA BSS");
+
+	start_kernel();
+}
 void __init x86_64_start_kernel(char *real_mode_data)
 {
 
@@ -33,7 +50,7 @@ void __init x86_64_start_kernel(char *real_mode_data)
 
 	zap_identity_mappings();
 
-//	cleanup_highmap();
+	//cleanup_highmap();
 
 	for(i = 0; i < NUM_EXCEPTION_VECTORS;i++)
 	{
@@ -41,6 +58,9 @@ void __init x86_64_start_kernel(char *real_mode_data)
 
 	}
 
+	load_idt((const struct desc_ptr*)&idt_descr);
+	
 	early_printk("\n\n\nnihao ,I am here\n");
-	while(1);
+	
+	x86_64_start_reservations(real_mode_data);
 }

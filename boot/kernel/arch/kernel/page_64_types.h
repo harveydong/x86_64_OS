@@ -21,6 +21,7 @@
 #define __START_KERNEL_map 0xffffffff80000000
 #define __PAGE_OFFSET 0xffff880000000000
 
+#define PAGE_OFFSET ((unsigned long)__PAGE_OFFSET)
 
 #define KERNEL_IMAGE_SIZE (512*1024*1024)
 #define PMD_PAGE_SIZE (1 << PMD_SHIFT)
@@ -35,6 +36,6 @@
 
 #define IRQ_STACK_ORDER 2
 #define IRQ_STACK_SIZE (PAGE_SIZE << IRQ_STACK_ORDER)
-
+#define __phys_reloc_hide(x) (x)
 
 #endif
