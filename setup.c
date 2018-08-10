@@ -41,8 +41,11 @@ static void load_header32(struct boot_header *header)
 	unsigned block = header->header_start_sector;
 	unsigned blocks = (header->image_size + 511) / 512;
 
+	puts("into load header32...\n");
+	printf("start sector:%d,and load_addr:%x\n",block,header->image_addr);
 	fill_disk_drive(header->boot_drive, &drive);
 	while (blocks--) {
+
 		read_block(&drive, block++, load_addr);
 		load_addr += 512;
 	}
@@ -67,6 +70,7 @@ static void load_kernel(struct boot_header *header)
 
 
 	Elf64_Ehdr *elf = (Elf64_Ehdr *)buf;
+	printf("elf:%x,%x\n",elf->e_ident[0],elf->e_ident[1]);
 	if(elf->e_ident[0] != 0x7f || elf->e_ident[1] != 'E' || elf->e_ident[2] != 'L'|| elf->e_ident[3] != 'F'){
 		puts("error read elf header\n");
 		while(1);
@@ -156,17 +160,22 @@ void setup(struct boot_header *header)
 	//e820_show(&params);
 	enable_a20();
 
+	puts("After enable A20...\n");
 	//init_heap();
 	set_bios_mode();
 	//set_video();
-	load_header32(&params.boot_header);
-	load_kernel(&params.boot_header);
 	
+	load_header32(&params.boot_header);
+	puts("after load header32...\n");
+	load_kernel(&params.boot_header);
+	puts("after load kernel...\n");	
 	reset_coprocessor();
-//	mask_all_interrupt(); 
-//	setup_idt();
+	mask_all_interrupt(); 
+	//setup_idt();
 	setup_boot_gdt();
+	//setup_idt();
 
 	my_main();
+	printf("image addr: %x\n",params.boot_header.image_addr);
 	enter_pm(params.boot_header.image_addr, &params);
 }

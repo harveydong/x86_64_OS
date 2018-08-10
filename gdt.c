@@ -51,14 +51,14 @@ void setup_boot_gdt(void)
 {
 	ptr.size = sizeof(boot_gdt) - 1;
 //	ptr.addr = (unsigned long)&boot_gdt + (get_ds() << 4);
-	ptr.addr = (unsigned long)&boot_gdt;
+	ptr.addr = (unsigned long)&boot_gdt + (get_ds() << 4);
 	asm volatile("lgdtl %0" : : "m"(ptr));
 }
+static const struct gdt_ptr null_idt = {0,0};
 
 void setup_idt(void)
 {
-	static const struct gdt_ptr null_idt = {0,0};
-
+	
 	asm volatile("lidtl %0"::"m"(null_idt));
 
 }
