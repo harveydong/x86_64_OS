@@ -49,6 +49,7 @@ SECTIONS{
 		_etext = .; 
 	}:text = 0x9090
 
+
 	. = ALIGN((1<<12));
 	.rodata : AT(ADDR(.rodata) - 0xffffffff80000000) {
 		__start_rodata = .;
@@ -78,6 +79,7 @@ SECTIONS{
 		__bss_stop = .;
 	}
 	
+	. = ALIGN(1<<12);	
 	__per_cpu_load = .;
 	.data..percpu  : AT(__per_cpu_load - 0xffffffff80000000){
 		__per_cpu_start = .;
@@ -89,13 +91,15 @@ SECTIONS{
 
 	} :percpu . = __per_cpu_load + SIZEOF(.data..percpu);
 
-
+	. = __per_cpu_end;
 	. = ALIGN((1<<12));
 	.init.text : AT(ADDR(.init.text) - 0xffffffff80000000){
 		_sinittext = .;
 		*(.init.text) 
 		_einittext = .;
 	}:init
+
+
 
 	_end = .;
 

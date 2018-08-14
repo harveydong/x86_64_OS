@@ -4,6 +4,8 @@
 #include "../../../segment.h"
 #include "desc_defs.h"
 #include "irq.h"
+#include "cache.h"
+#include "sched.h"
 
 DEFINE_PER_CPU_PAGE_ALIGNED(struct gdt_page,gdt_page) = {
 	.gdt = {
@@ -21,5 +23,7 @@ DECLARE_INIT_PER_CPU(irq_stack_union);
 
 DEFINE_PER_CPU_FIRST(union irq_stack_union,irq_stack_union) __attribute__((aligned(PAGE_SIZE)));
 
+
+DEFINE_PER_CPU(struct task_struct *,current_task) ____cacheline_aligned = &init_task;
 
 struct desc_ptr idt_descr = {NR_VECTORS*16 -1,(unsigned long)idt_table};

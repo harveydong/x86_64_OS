@@ -70,7 +70,7 @@ static void load_kernel(struct boot_header *header)
 
 
 	Elf64_Ehdr *elf = (Elf64_Ehdr *)buf;
-	printf("elf:%x,%x\n",elf->e_ident[0],elf->e_ident[1]);
+	//printf("elf:%x,%x\n",elf->e_ident[0],elf->e_ident[1]);
 	if(elf->e_ident[0] != 0x7f || elf->e_ident[1] != 'E' || elf->e_ident[2] != 'L'|| elf->e_ident[3] != 'F'){
 		puts("error read elf header\n");
 		while(1);
@@ -178,4 +178,5 @@ void setup(struct boot_header *header)
 	my_main();
 	printf("image addr: %x\n",params.boot_header.image_addr);
 	enter_pm(params.boot_header.image_addr, &params);
+
 }

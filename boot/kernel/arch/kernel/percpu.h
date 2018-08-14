@@ -14,10 +14,10 @@
 #define INIT_PER_CPU_VAR(var) init_per_cpu__##var
 
 #define __PCPU_ATTRS(sec) \
-	__percpu __attribute((section(PER_CPU_BASE_SECTION sec))) \
+	__percpu __attribute__((section(PER_CPU_BASE_SECTION sec))) \
 	PER_CPU_ATTRIBUTES
 #define DECLARE_PER_CPU_SECTION(type,name,sec)\
-	__PCPU_ATTRS(sec) PER_CPU_DEF_ATTRIBUTES\
+	extern __PCPU_ATTRS(sec) PER_CPU_DEF_ATTRIBUTES\
 	__typeof__(type) name
 
 #define DECLARE_PER_CPU_PAGE_ALIGNED(type,name)\
@@ -43,4 +43,6 @@
 	DEFINE_PER_CPU_SECTION(type,name,"..page_aligned") \
 	__aligned(PAGE_SIZE)
 
+#define DEFINE_PER_CPU(type,name)	\
+	DEFINE_PER_CPU_SECTION(type,name,"")
 #endif

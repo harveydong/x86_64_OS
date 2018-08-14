@@ -26,6 +26,8 @@ struct task_struct{
 	unsigned int policy;
 	struct mm_struct *mm,*active_mm;
 	struct list_head tasks;
+	unsigned long stack_canary;
+	
 };
 extern union thread_union init_thread_union;
 extern struct task_struct init_task;
